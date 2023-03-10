@@ -1,0 +1,8 @@
+- project:
+    name: nebulous/project-config
+    check:
+      jobs:
+        - noop
+    gate:
+      jobs:
+        - noop
