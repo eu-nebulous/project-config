@@ -1,0 +1,23 @@
+- job:
+    name: nebulous-build-container-images
+    parent: opendev-build-container-image
+    description: Build the container images.
+    vars: &image_vars
+      promote_container_image_method: intermediate-registry
+
+- job:
+    name: nebulous-upload-container-images
+    parent: opendev-upload-container-image
+    description: Build and upload the container images.
+    vars: *image_vars
+
+- job:
+    name: nebulous-promote-container-images
+    parent: opendev-promote-container-image
+    description: Promote previously uploaded container images.
+    vars: *image_vars
+    post-review: true
+    secrets:
+      - name: container_registry_credentials
+        secret: nebulous-container-registry-credentials
+        pass-to-parent: true
