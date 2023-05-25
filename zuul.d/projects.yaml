@@ -2,7 +2,8 @@
     name: nebulous/project-config
     check:
       jobs:
-        - noop
+        - nox-linters:
+            voting: false
     gate:
       jobs:
         - noop

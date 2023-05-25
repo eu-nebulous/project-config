@@ -9,8 +9,8 @@
     precedence: low
     require:
       gerrit:
-        open: True
-        current-patchset: True
+        open: true
+        current-patchset: true
     trigger:
       gerrit:
         - event: patchset-created
@@ -37,11 +37,11 @@
     manager: dependent
     precedence: normal
     supercedes: check
-    post-review: True
+    post-review: true
     require:
       gerrit:
-        open: True
-        current-patchset: True
+        open: true
+        current-patchset: true
         approval:
           - Workflow: 1
     trigger:
@@ -72,7 +72,7 @@
       log --format=%h) of the merge commit.
     manager: supercedent
     precedence: high
-    post-review: True
+    post-review: true
     trigger:
       gerrit:
         - event: ref-updated
@@ -88,7 +88,7 @@
     failure-message: Build failed (promote pipeline).
     manager: supercedent
     precedence: high
-    post-review: True
+    post-review: true
     trigger:
       gerrit:
         - event: change-merged
@@ -104,7 +104,7 @@
       that publish archives and documentation.
     manager: independent
     precedence: high
-    post-review: True
+    post-review: true
     trigger:
       gerrit:
         - event: ref-updated
