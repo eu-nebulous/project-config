@@ -21,3 +21,9 @@
       - name: container_registry_credentials
         secret: nebulous-container-registry-credentials
         pass-to-parent: true
+
+- job:
+    name: nebulous-hadolint
+    description: Run Hadolint on Dockerfile(s).
+    pre-run: playbooks/hadolint/pre.yaml
+    run: playbooks/hadolint/run.yaml
