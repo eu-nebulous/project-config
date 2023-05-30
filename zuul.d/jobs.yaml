@@ -27,3 +27,10 @@
     description: Run Hadolint on Dockerfile(s).
     pre-run: playbooks/hadolint/pre.yaml
     run: playbooks/hadolint/run.yaml
+
+- job:
+    name: nebulous-apply-helm-charts
+    parent: apply-helm-charts
+    description: Deploy a Kubernetes cluster and apply charts.
+    vars:
+      helm_version: "3.12.0"
