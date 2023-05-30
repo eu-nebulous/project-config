@@ -36,6 +36,13 @@
       helm_version: &helm_version "3.12.0"
 
 - job:
+    name: nebulous-chart-testing-lint
+    parent: chart-testing-lint
+    description: Run chart-testing on Helm charts.
+    vars:
+      helm_version: *helm_version
+
+- job:
     name: nebulous-apply-helm-charts
     parent: apply-helm-charts
     description: Deploy a Kubernetes cluster and apply charts.
