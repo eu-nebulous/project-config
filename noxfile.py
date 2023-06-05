@@ -5,8 +5,6 @@ nox.options.reuse_existing_virtualenvs = True
 
 YAML_PATHS = [
     "./zuul.d/",
-    "./playbooks/",
-    "./roles/",
 ]
 
 PYTHON_PATHS = [
