@@ -1,5 +1,6 @@
 - project:
     name: nebulous/project-config
+    queue: nebulous-project-config
     check:
       jobs:
         - nox-linters:
@@ -7,3 +8,7 @@
     gate:
       jobs:
         - noop
+
+- project:
+    name: ^nebulous/.+
+    queue: nebulous-integrated
