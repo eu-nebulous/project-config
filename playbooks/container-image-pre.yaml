@@ -2,9 +2,9 @@
   tasks:
     - name: Verify repository naming scheme
       when: |
-        not zj_image.repository | regex_search("^quay.io/{{ zuul.project.name }}\b")
+        not zj_image.repository | regex_search("^quay.io/{{ zuul.project.name }}\\b")
       loop: "{{ container_images }}"
       loop_control:
         loop_var: zj_image
       fail:
-        msg: "{{ zj_image.repository }} not permitted by ^quay.io/{{ zuul.project.name }}-.+"
+        msg: "{{ zj_image.repository }} not permitted by ^quay.io/{{ zuul.project.name }}\\b"
