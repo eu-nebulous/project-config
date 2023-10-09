@@ -1,0 +1,28 @@
+- hosts: all
+  roles:
+    - install-jdk
+    - install-maven
+  tasks:
+    - name: Ensure .m2 directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.m2"
+        state: directory
+
+    - name: Template out settings.xml
+      template:
+        src: settings.xml.j2
+        dest: "{{ ansible_env.HOME }}/.m2/settings.xml"
+      vars:
+        username: "{{ nebulous_nexus_repository_credentials.username }}"
+        password: "{{ nebulous_nexus_repository_credentials.password }}"
+
+    - name: Deploy the artifact to OSSRH
+      shell: |
+        mvn deploy -DskipTests
+      args:
+        chdir: "{{ project_path }}"  # Pointing to the directory with pom.xml
+      vars:
+        project_path: "{{ zuul.project.src_dir }}/{{ java_library_path }}"
+      environment:
+        MAVEN_HOME: "/opt/apache-maven-3.8.8"
+        PATH: "{{ ansible_env.PATH }}:/opt/apache-maven-3.8.8/bin"

@@ -1,0 +1,23 @@
+- hosts: all
+  tasks:
+    - name: Set Sonatype Username
+      set_fact:
+        sonatype_username: "{{ nebulous_nexus_repository_credentials.username }}"
+
+    - name: Set Sonatype Password
+      set_fact:
+        sonatype_password: "{{ nebulous_nexus_repository_credentials.password }}"
+
+    - name: Retrieve the Staging Repository ID
+      shell: |
+        response=$(curl -s -u "{{ sonatype_username }}:{{ sonatype_password }}" \
+        "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/{{ sonatype_username }}")
+        echo $response | jq -r '.data[].stagedRepositoryId' | tail -n 1
+      register: result
+
+    - name: Release the staging repository
+      shell: |
+        curl -u "{{ sonatype_username }}:{{ sonatype_password }}" \
+        -X POST https://s01.oss.sonatype.org/service/local/staging/profiles/your-profile-id/finish \
+        -H "Content-Type: application/json" \
+        -d '{"data": {"stagedRepositoryId": "{{ result.stdout }}"}}'
