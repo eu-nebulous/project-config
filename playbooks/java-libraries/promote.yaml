@@ -10,6 +10,7 @@
 
     - name: Retrieve the Staging Repository ID
       shell: |
+        set -o pipefail
         response=$(curl -s -u "{{ sonatype_username }}:{{ sonatype_password }}" \
         "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/{{ sonatype_username }}")
         echo $response | jq -r '.data[].stagedRepositoryId' | tail -n 1
@@ -17,6 +18,7 @@
 
     - name: Release the staging repository
       shell: |
+        set -o pipefail
         curl -u "{{ sonatype_username }}:{{ sonatype_password }}" \
         -X POST https://s01.oss.sonatype.org/service/local/staging/profiles/your-profile-id/finish \
         -H "Content-Type: application/json" \
