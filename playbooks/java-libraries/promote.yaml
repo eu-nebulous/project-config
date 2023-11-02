@@ -1,25 +1,28 @@
 - hosts: all
   tasks:
-    - name: Set Sonatype Username
-      set_fact:
-        sonatype_username: "{{ nebulous_nexus_repository_credentials.username }}"
-
-    - name: Set Sonatype Password
-      set_fact:
-        sonatype_password: "{{ nebulous_nexus_repository_credentials.password }}"
-
     - name: Retrieve the Staging Repository ID
-      shell: |
-        set -o pipefail
-        response=$(curl -s -u "{{ sonatype_username }}:{{ sonatype_password }}" \
-        "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/{{ sonatype_username }}")
-        echo $response | jq -r '.data[].stagedRepositoryId' | tail -n 1
-      register: result
+      uri:
+        url: "https://s01.oss.sonatype.org/service/local/staging/deployByRepositoryId/{{ nebulous_nexus_repository_credentials.username }}"
+        user: "{{ nebulous_nexus_repository_credentials.username }}"
+        password: "{{ nebulous_nexus_repository_credentials.password }}"
+        method: GET
+        return_content: yes
+      register: repository_response
+      failed_when: repository_response.status != 200
+
+    - name: Set Staging Repository ID
+      set_fact:
+        staging_repository_id: "{{ repository_response.json | json_query('data[-1].stagedRepositoryId') }}"
 
     - name: Release the staging repository
-      shell: |
-        set -o pipefail
-        curl -u "{{ sonatype_username }}:{{ sonatype_password }}" \
-        -X POST https://s01.oss.sonatype.org/service/local/staging/profiles/your-profile-id/finish \
-        -H "Content-Type: application/json" \
-        -d '{"data": {"stagedRepositoryId": "{{ result.stdout }}"}}'
+      uri:
+        url: "https://s01.oss.sonatype.org/service/local/staging/profiles/your-profile-id/finish"
+        user: "{{ nebulous_nexus_repository_credentials.username }}"
+        password: "{{ nebulous_nexus_repository_credentials.password }}"
+        method: POST
+        body: "{{ {'data': {'stagedRepositoryId': staging_repository_id }} | to_json }}"
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+      register: release_response
+      failed_when: release_response.status != 200
