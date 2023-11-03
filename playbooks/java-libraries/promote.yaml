@@ -1,32 +1,22 @@
 - hosts: all
   vars:
-    staging_profile_id: "4576392699bd78"
+    library_path: "{{ zuul.project.src_dir }}/{{ java_libraries[0].context }}"
+
   tasks:
-    - name: Retrieve the list of Staging Repositories for the given profile
-      uri:
-        url: "https://s01.oss.sonatype.org/service/local/staging/profile_repositories/{{ staging_profile_id }}"
-        user: "{{ nebulous_nexus_repository_credentials.username | trim }}"
-        password: "{{ nebulous_nexus_repository_credentials.password | trim }}"
-        method: GET
-        return_content: yes
-        headers:
-          Accept: "application/json"
-      register: repository_response
-      failed_when: repository_response.status != 200
+    - name: Clean and prepare release
+      command: mvn release:clean release:prepare
+      args:
+        chdir: "{{ library_path }}"
+      environment:
+        MAVEN_HOME: "/opt/apache-maven-3.8.8"
+        PATH: "{{ ansible_env.PATH }}:/opt/apache-maven-3.8.8/bin"
+      become: yes
 
-    - name: Set Staging Repository ID
-      set_fact:
-        staging_repository_id: "{{ (repository_response.json | json_query('data[-1].stagedRepositoryId')) }}"
-
-    - name: Release the staging repository
-      uri:
-        url: "https://s01.oss.sonatype.org/service/local/staging/profiles/{{ staging_profile_id }}/finish"
-        user: "{{ nebulous_nexus_repository_credentials.username | trim }}"
-        password: "{{ nebulous_nexus_repository_credentials.password | trim }}"
-        method: POST
-        body: "{{ {'data': {'stagedRepositoryId': staging_repository_id }} | to_json }}"
-        body_format: json
-        headers:
-          Accept: "application/json"
-      register: release_response
-      failed_when: release_response.status != 200
+    - name: Perform release
+      command: mvn release:perform
+      args:
+        chdir: "{{ library_path }}"
+      environment:
+        MAVEN_HOME: "/opt/apache-maven-3.8.8"
+        PATH: "{{ ansible_env.PATH }}:/opt/apache-maven-3.8.8/bin"
+      become: yes
