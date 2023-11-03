@@ -5,8 +5,8 @@
     - name: Retrieve the list of Staging Repositories for the given profile
       uri:
         url: "https://s01.oss.sonatype.org/service/local/staging/profile_repositories/{{ staging_profile_id }}"
-        user: "{{ nebulous_nexus_repository_credentials.username }}"
-        password: "{{ nebulous_nexus_repository_credentials.password }}"
+        user: "{{ nebulous_nexus_repository_credentials.username | trim }}"
+        password: "{{ nebulous_nexus_repository_credentials.password | trim }}"
         method: GET
         return_content: yes
         headers:
@@ -21,8 +21,8 @@
     - name: Release the staging repository
       uri:
         url: "https://s01.oss.sonatype.org/service/local/staging/profiles/{{ staging_profile_id }}/finish"
-        user: "{{ nebulous_nexus_repository_credentials.username }}"
-        password: "{{ nebulous_nexus_repository_credentials.password }}"
+        user: "{{ nebulous_nexus_repository_credentials.username | trim }}"
+        password: "{{ nebulous_nexus_repository_credentials.password | trim }}"
         method: POST
         body: "{{ {'data': {'stagedRepositoryId': staging_repository_id }} | to_json }}"
         body_format: json
