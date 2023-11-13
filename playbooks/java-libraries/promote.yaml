@@ -1,6 +1,9 @@
 - hosts: all
   vars:
     library_path: "{{ zuul.project.src_dir }}/{{ java_libraries[0].context }}"
+  roles:
+    - install-jdk
+    - install-maven
 
   tasks:
     - name: Clean and prepare release

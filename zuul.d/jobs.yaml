@@ -37,6 +37,8 @@
 - job:
     name: nebulous-promote-java-libraries
     run: playbooks/java-libraries/promote.yaml
+    roles:
+      - zuul: nebulous/zuul-jobs
     secrets:
       - name: nebulous_nexus_repository_credentials
         secret: nebulous-nexus-repository-credentials
