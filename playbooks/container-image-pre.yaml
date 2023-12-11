@@ -2,7 +2,7 @@
   tasks:
     - name: Verify repository naming scheme
       when: |
-        not zj_image.repository | regex_search("".join("^quay.io/", zuul.project.name, "\\b"))
+        not zj_image.repository | regex_search("".join(["^quay.io/", zuul.project.name, "\\b"]))
       loop: "{{ container_images }}"
       loop_control:
         loop_var: zj_image
