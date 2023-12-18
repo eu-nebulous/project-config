@@ -4,6 +4,10 @@
     description: Build the container images.
     vars: &image_vars
       promote_container_image_method: intermediate-registry
+      docker_images:
+        tags:
+          - latest
+          - "{{ zuul.commit_id }}"
     pre-run: playbooks/container-image-pre.yaml
 
 - job:
