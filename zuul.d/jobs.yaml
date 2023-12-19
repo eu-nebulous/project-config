@@ -19,6 +19,9 @@
     description: Promote previously uploaded container images.
     vars: *image_vars
     pre-run: playbooks/container-image-pre.yaml
+    run: playbooks/promote-container-image.yaml
+    roles:
+      - zuul: nebulous/zuul-jobs
     post-review: true
     secrets:
       - name: container_registry_credentials
