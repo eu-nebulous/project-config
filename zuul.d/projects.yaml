@@ -9,6 +9,7 @@
       jobs:
         - noop
 
-- project:
-    name: ^nebulous/.+
-    queue: nebulous-integrated
+# FIXME(rpiliszek): Disabled common queue -- to speed up the CD process at the cost of QA of integration.
+# - project:
+#     name: ^nebulous/.+
+#     queue: nebulous-integrated
